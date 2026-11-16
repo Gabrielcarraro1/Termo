@@ -3,6 +3,9 @@ let segredo = ""
 let rodada = 0;
 let qtdLetras = 5;
 let tentativas = [];
+let formularioJogo;
+let linhaTentativas;
+let botaoEnvio;
 
 function iniciar() {
     //Banco de Palavras
@@ -51,12 +54,14 @@ function verificar() {
     //Repetir até 5x
     //Pegar todas as letras digitadas pelo usuário
     let tentativa = "";
-    let formularioNome = "termo" + rodada;
+    let linhaAtual = document.getElementById("termo" + rodada);
 
     for (let i = 0; i < qtdLetras; i++) {
-        let caixa = document.forms[formularioNome]["letra" + i].value.toUpperCase();
-        let campo = document.forms[formularioNome]["letra" + i];
+        let campo = document.getElementById("termo" + rodada + "-letra" + i);
+        let caixa = campo.value.toUpperCase();
         let wrapper = campo.parentElement;
+
+        campo.value = caixa;
 
         if (caixa == segredo[i]) {
             campo.style.backgroundColor = "green";
@@ -69,6 +74,8 @@ function verificar() {
             setTimeout(() => campo.classList.add("tile--error"), 420);
         }
 
+        //A tentativa enviada fica visível, mas não pode mais ser editada.
+        campo.disabled = true;
         tentativa += caixa;
     }
 
@@ -89,6 +96,7 @@ function verificar() {
 
     if (segredo == tentativa) {
         mostrarConfetes();
+        botaoEnvio.disabled = true;
         alert("Acertou")
     } else {
         rodada++;
@@ -96,6 +104,7 @@ function verificar() {
         if (rodada < 5) {
             criarFormulario();
         } else {
+            botaoEnvio.disabled = true;
             alert("Fim de Jogo")
         }
     }
@@ -104,20 +113,31 @@ function verificar() {
 }
 
 function criarFormulario() {
-    //Criar formulário
     let jogo = document.getElementById("jogo");
 
-    //Criando o elemento form
-    let formulario = document.createElement("form");
-    formulario.name = "termo" + rodada;
-    formulario.className = "guess-form";
+    //O formulário e o botão são criados uma única vez para todas as rodadas.
+    if (!formularioJogo) {
+        formularioJogo = document.createElement("form");
+        formularioJogo.className = "guess-form";
+        formularioJogo.onsubmit = function () {
+            verificar();
+            return false;
+        };
 
-    formulario.onsubmit = function () {
-        verificar();
-        return false;
+        linhaTentativas = document.createElement("div");
+        linhaTentativas.className = "guess-rows";
+        formularioJogo.appendChild(linhaTentativas);
+
+        botaoEnvio = document.createElement("input");
+        botaoEnvio.type = "submit";
+        botaoEnvio.value = "Enviar";
+        botaoEnvio.className = "submit-button";
+        formularioJogo.appendChild(botaoEnvio);
+        jogo.appendChild(formularioJogo);
     }
 
     let linhaLetras = document.createElement("div");
+    linhaLetras.id = "termo" + rodada;
     linhaLetras.className = "tile-row";
 
     for (let i = 0; i < qtdLetras; i++) {
@@ -127,10 +147,10 @@ function criarFormulario() {
         let caixa = document.createElement("input");
         caixa.type = "text";
         caixa.maxLength = 1;
-        caixa.name = "letra" + i;
+        caixa.id = "termo" + rodada + "-letra" + i;
         caixa.className = "letter-tile";
         caixa.autocomplete = "off";
-        caixa.setAttribute("aria-label", "Letra " + (i + 1));
+        caixa.setAttribute("aria-label", "Tentativa " + (rodada + 1) + ", letra " + (i + 1));
 
         let xAnimado = document.createElement("span");
         xAnimado.className = "error-mark";
@@ -142,15 +162,8 @@ function criarFormulario() {
         linhaLetras.appendChild(wrapper);
     }
 
-    formulario.appendChild(linhaLetras);
-
-    let botao = document.createElement("input");
-    botao.type = "submit";
-    botao.value = "Enviar";
-    botao.className = "submit-button";
-    formulario.appendChild(botao)
-
-    jogo.appendChild(formulario);
+    linhaTentativas.appendChild(linhaLetras);
+    botaoEnvio.disabled = false;
 }
 
 iniciar();
