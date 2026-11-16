@@ -15,6 +15,7 @@
             --green: #6aaa64;
             --yellow: #c9b458;
             --red: #d9534f;
+            --dark: #202124;
         }
 
         * { box-sizing: border-box; }
@@ -52,17 +53,34 @@
             gap: 10px;
         }
 
-        form.guess-form {
+        .guess-form {
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 12px;
             margin: 0;
+            width: 100%;
         }
 
-        .tile-row { display: flex; justify-content: center; gap: 7px; }
+        .guess-rows {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
 
-        .tile-wrap { position: relative; width: 54px; height: 54px; }
+        .tile-row {
+            display: flex;
+            justify-content: center;
+            gap: 7px;
+        }
+
+        .tile-wrap {
+            position: relative;
+            width: 54px;
+            height: 54px;
+        }
 
         .letter-tile {
             width: 100%;
@@ -80,8 +98,22 @@
             transition: background-color .18s ease, border-color .18s ease, color .18s ease;
         }
 
-        .letter-tile:focus { border-color: #858b92; }
-        .letter-tile.tile--error { color: var(--red) !important; border-color: var(--red) !important; }
+        .letter-tile:focus {
+            border-color: #858b92;
+        }
+
+        .letter-tile:disabled {
+            color: var(--dark);
+            background: #fff;
+            opacity: 1;
+            cursor: default;
+        }
+
+        .letter-tile.tile--error {
+            color: var(--red) !important;
+            border-color: var(--red) !important;
+            background: #fff !important;
+        }
 
         .error-mark {
             position: absolute;
@@ -95,7 +127,9 @@
             opacity: 0;
         }
 
-        .tile-wrap.is-missing .error-mark { animation: error-mark .42s ease both; }
+        .tile-wrap.is-missing .error-mark {
+            animation: error-mark .42s ease both;
+        }
 
         @keyframes error-mark {
             0% { opacity: 0; transform: scale(.35) rotate(-20deg); }
@@ -109,7 +143,7 @@
             padding: 10px 18px;
             border: 0;
             border-radius: 4px;
-            background: #24292e;
+            background: var(--dark);
             color: #fff;
             font-size: .95rem;
             font-weight: 700;
@@ -118,8 +152,12 @@
 
         .submit-button:hover { background: #41474d; }
         .submit-button:focus-visible { outline: 3px solid #9aa0a6; outline-offset: 3px; }
+        .submit-button:disabled { opacity: .55; cursor: not-allowed; }
 
-        .used-letters { margin-top: 30px; text-align: center; }
+        .used-letters {
+            margin-top: 30px;
+            text-align: center;
+        }
 
         .used-letters h2 {
             margin: 0 0 10px;
@@ -166,7 +204,11 @@
         }
 
         @media (prefers-reduced-motion: reduce) {
-            *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
+            *, *::before, *::after {
+                animation-duration: .01ms !important;
+                animation-iteration-count: 1 !important;
+                scroll-behavior: auto !important;
+            }
         }
     </style>
 </head>
